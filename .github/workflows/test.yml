@@ -1,0 +1,23 @@
+name: Test
+
+on:
+  push
+
+jobs:
+  test:
+    name: Test application
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Mecab
+        uses: ./.github/actions/mecab-install
+
+      - name: Check
+        run: which mecab
+
