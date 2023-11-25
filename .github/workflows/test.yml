@@ -21,3 +21,6 @@ jobs:
       - name: Check
         run: which mecab
 
+      - name: test mecab
+        run: echo "すもももももももものうち" |mecab 
+
