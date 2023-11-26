@@ -7,19 +7,22 @@ runs:
       uses: actions/cache@v3
       id: mecab-cache
       with:
-        key: mecab-${{ runner.os }}-202209
+        key: mecab-${{ runner.os }}-202311
         path: ~/mecab-0.996
 
     - name: Download Mecab
-      run: wget https://drive.google.com/uc?id=0B4y35FiV1wh7cENtOXlicTFaRUE -O - | tar zxvf -
+      run: |
+        cd ~/
+        wget https://drive.google.com/uc?id=0B4y35FiV1wh7cENtOXlicTFaRUE -O - | tar zxvf -
       if: steps.mecab-cache.outputs.cache-hit != 'true'
       shell: bash
 
     - name: Install Mecab
       run: | 
-        cd mecab-0.996/
+        cd ~/mecab-0.996/
         ./configure --enable-utf8-only
         make
         sudo make install
         sudo ldconfig
       shell: bash
+      
