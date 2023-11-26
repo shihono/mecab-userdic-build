@@ -1,6 +1,6 @@
 import pytest
 
-from mecab_userdic_build.mecab_tagger import parse
+from mecab_userdic_build.mecab_tagger import parse, get_reading_pronun
 
 params = {
      "pythonが大好きです": [
@@ -25,3 +25,15 @@ params = {
 )
 def test_parse_unidic(text,words):
     assert parse(text) == words
+
+@pytest.mark.parametrize("word,reading, pronounce", [
+    ("テスト", "テスト", "テスト"), 
+    ("東京特許許可局", "トウキョウトッキョキョカキョク", "トーキョートッキョキョカキョク"),
+    ("Financial Times", "*", "*"),
+    ("ヨーロッパ・アジア", "ヨーロッパアジア", "ヨーロッパアジア")
+     ]
+)
+def test_get_reading(word, reading, pronounce):
+    res = get_reading_pronun(word) 
+    assert res[0] == reading
+    assert res[1] == pronounce

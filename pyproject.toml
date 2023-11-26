@@ -9,6 +9,7 @@ readme = "README.md"
 python = "^3.8"
 mecab-python3 = "^1.0.8"
 unidic-lite = "^1.0.8"
+jaconv = "^0.3.4"
 
 
 [tool.poetry.group.dev.dependencies]
