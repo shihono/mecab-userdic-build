@@ -1,0 +1,84 @@
+name: Build mecab user dictionary
+
+on:
+  push:
+    branches: 
+        - main
+
+jobs:
+  build:
+    name: Build and upload user.dic
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    defaults:
+        run:
+            shell: bash
+    steps:
+        ### 環境設定
+        - name: Checkout
+          uses: actions/checkout@v4
+
+        - name: Set up poetry
+          run: pipx install poetry
+
+        - name: Set up python
+          uses: actions/setup-python@v4
+          with:
+            python-version: '3.10'
+            cache: 'poetry'
+        
+        - name: Poetry install
+          run: poetry install
+
+        - name: Install Mecab
+          uses: ./.github/actions/install-mecab
+
+        - name: Install Neologd
+          uses: ./.github/actions/install-ipadic
+
+        ### user.dic の作成
+        - name: Cache Mecab Model
+          uses: actions/cache@v3
+          id: mecab-cache
+          with:
+            key: mecab-model-${{ runner.os }}-202311
+            path: ~/mecab-ipadic.model.utf8
+
+        # モデルの文字コードを utf-8 に設定
+        - name: Download mecab model file
+          run: |
+            cd ~/
+            wget "https://drive.google.com/uc?export=download&id=0B4y35FiV1wh7bnc5aFZSTE9qNnM"  -O - |bzip2 -d > mecab-ipadic.model
+            iconv -c -f euc-jp -t utf8 mecab-ipadic.model > mecab-ipadic.model.utf8
+            sed -i 's/charset: euc-jp/charset: utf-8/g' mecab-ipadic.model.utf8
+          if: steps.mecab-cache.outputs.cache-hit != 'true'
+
+        - name: Generate user_dict.csv
+          run: |
+              python mecab_userdic_build/create_userdic.py dict_words/ \
+              --recursive -O user_dict.csv
+
+        - name: Estimate user_dict cost
+          run: >
+            `mecab-config --libexecdir`/mecab-dict-index 
+            -m ~/mecab-ipadic.model.utf8
+            -d ~/mecab-ipadic-2.7.0-20070801/
+            -u user_dict_estimate.csv \
+            -f utf-8 -t utf-8 \
+            -a user_dict.csv
+
+        - name: Generate user.dic
+          run: |
+            `mecab-config --libexecdir`/mecab-dict-index \
+            -d ~/mecab-ipadic-2.7.0-20070801/ \
+            -u ./user.dic \
+            -f utf-8 -t utf-8 \
+            ./user_dict_estimate.csv
+
+        - name: Upload user.dic
+          uses: actions/upload-artifact@v3
+          with:
+            name: user-dic
+            path: |
+              ./user.dic
+              ./user_dict_estimate.csv
