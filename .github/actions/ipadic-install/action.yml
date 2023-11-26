@@ -20,7 +20,7 @@ runs:
     - name: Install IPAdic
       run: | 
         cd ~/mecab-ipadic-2.7.0-20070801/
-        ./configure
+        ./configure --with-charset=utf8
         make
         sudo make install
       shell: bash
