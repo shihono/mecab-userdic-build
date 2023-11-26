@@ -1,0 +1,27 @@
+name: "Install IPAdic"
+description: "IPAdicをインストールするComposite Action"
+runs:
+  using: "composite"
+  steps:
+    - name: Cache IPAdic
+      uses: actions/cache@v3
+      id: ipadic-cache
+      with:
+        key: ipadic-${{ runner.os }}-202311
+        path: ~/mecab-ipadic-2.7.0-20070801
+
+    - name: Download IPAdic
+      run: |
+        cd ~/
+        wget "https://drive.google.com/uc?id=0B4y35FiV1wh7MWVlSDBCSXZMTXM" -O - | tar zxvf -
+      if: steps.ipadic-cache.outputs.cache-hit != 'true'
+      shell: bash
+
+    - name: Install IPAdic
+      run: | 
+        cd ~/mecab-ipadic-2.7.0-20070801/
+        ./configure
+        make
+        make install
+      shell: bash
+      
