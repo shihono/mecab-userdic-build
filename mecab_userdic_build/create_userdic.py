@@ -1,13 +1,11 @@
 import csv
 import os
-import re
 import argparse
 from glob import glob
 
 from jaconv import z2h
 from mecab_userdic_build.mecab_tagger import get_reading_pronun
 
-KATAKANA_PAT = re.compile(r"[\u30A1-\u30FF]+")
 ORG_POS = "名詞,固有名詞,組織,*"
 
 def load_csv(data_path):
@@ -29,12 +27,7 @@ def generate_mecab_entry(abbreviation, original, additional_entry="abbr_company"
     """
     abbreviation = z2h(abbreviation, kana=False, ascii=True, digit=True)
     original = z2h(original, kana=False, ascii=True, digit=True)
-
-    if KATAKANA_PAT.fullmatch(original):
-        # カタカナはそのまま読み・発音として利用
-        reading, pronounce = original, original
-    else:
-        reading, pronounce = get_reading_pronun(original)
+    reading, pronounce = get_reading_pronun(original)
     
     return f"{abbreviation},,,,{ORG_POS},*,*,{original},{reading},{pronounce},{additional_entry}"
 

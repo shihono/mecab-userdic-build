@@ -2,6 +2,8 @@ name: Build mecab user dictionary
 
 on:
   push:
+    branches:
+      - main
 
 jobs:
   build:
