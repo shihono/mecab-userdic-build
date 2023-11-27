@@ -61,16 +61,16 @@ jobs:
             `mecab-config --libexecdir`/mecab-dict-index 
             -m ~/mecab-ipadic.model.utf8
             -d ~/mecab-ipadic-2.7.0-20070801/
-            -u user_dict_estimate.csv \
-            -f utf-8 -t utf-8 \
+            -u user_dict_estimate.csv
+            -f utf-8 -t utf-8
             -a user_dict.csv
 
         - name: Generate user.dic
-          run: |
-            `mecab-config --libexecdir`/mecab-dict-index \
-            -d ~/mecab-ipadic-2.7.0-20070801/ \
-            -u ./user.dic \
-            -f utf-8 -t utf-8 \
+          run: >
+            `mecab-config --libexecdir`/mecab-dict-index 
+            -d ~/mecab-ipadic-2.7.0-20070801/ 
+            -u ./user.dic 
+            -f utf-8 -t utf-8 
             ./user_dict_estimate.csv
 
         - name: Upload user.dic
