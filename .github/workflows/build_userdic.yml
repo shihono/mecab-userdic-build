@@ -53,7 +53,7 @@ jobs:
 
         - name: Generate user_dict.csv
           run: |
-              python mecab_userdic_build/create_userdic.py dict_words/ \
+              poetry run python mecab_userdic_build/create_userdic.py dict_words/ \
               --recursive -O user_dict.csv
 
         - name: Estimate user_dict cost
