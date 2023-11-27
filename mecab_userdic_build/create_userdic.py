@@ -20,10 +20,11 @@ def load_csv(data_path):
     return data_list
 
 
-def generate_mecab_entry(abbreviation, original):
+def generate_mecab_entry(abbreviation, original, additional_entry="abbr_company"):
     """略称,正式名称のペアからmecab ipadic のエントリを作成
 
     - 英数記号は半角、カタカナは全角に揃える
+    - 読みと発音を正式名称から取得
     - コストとIDは空のまま
     """
     abbreviation = z2h(abbreviation, kana=False, ascii=True, digit=True)
@@ -35,7 +36,7 @@ def generate_mecab_entry(abbreviation, original):
     else:
         reading, pronounce = get_reading_pronun(original)
     
-    return f"{abbreviation},,,,{ORG_POS},*,*,{original},{reading},{pronounce},abbr_company"
+    return f"{abbreviation},,,,{ORG_POS},*,*,{original},{reading},{pronounce},{additional_entry}"
 
 
 def main():
