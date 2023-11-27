@@ -2,8 +2,8 @@ name: Build mecab user dictionary
 
 on:
   push:
-    branches: 
-        - main
+    branches:
+      - main
 
 jobs:
   build:
@@ -31,10 +31,10 @@ jobs:
           run: poetry install
 
         - name: Install Mecab
-          uses: ./.github/actions/install-mecab
+          uses: ./.github/actions/mecab-install
 
         - name: Install Neologd
-          uses: ./.github/actions/install-ipadic
+          uses: ./.github/actions/ipadic-install
 
         ### user.dic の作成
         - name: Cache Mecab Model
@@ -55,7 +55,7 @@ jobs:
 
         - name: Generate user_dict.csv
           run: |
-              python mecab_userdic_build/create_userdic.py dict_words/ \
+              poetry run python mecab_userdic_build/create_userdic.py dict_words/ \
               --recursive -O user_dict.csv
 
         - name: Estimate user_dict cost
@@ -63,16 +63,16 @@ jobs:
             `mecab-config --libexecdir`/mecab-dict-index 
             -m ~/mecab-ipadic.model.utf8
             -d ~/mecab-ipadic-2.7.0-20070801/
-            -u user_dict_estimate.csv \
-            -f utf-8 -t utf-8 \
+            -u user_dict_estimate.csv
+            -f utf-8 -t utf-8
             -a user_dict.csv
 
         - name: Generate user.dic
-          run: |
-            `mecab-config --libexecdir`/mecab-dict-index \
-            -d ~/mecab-ipadic-2.7.0-20070801/ \
-            -u ./user.dic \
-            -f utf-8 -t utf-8 \
+          run: >
+            `mecab-config --libexecdir`/mecab-dict-index 
+            -d ~/mecab-ipadic-2.7.0-20070801/ 
+            -u ./user.dic 
+            -f utf-8 -t utf-8 
             ./user_dict_estimate.csv
 
         - name: Upload user.dic
