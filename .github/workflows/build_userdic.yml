@@ -33,7 +33,7 @@ jobs:
         - name: Install Mecab
           uses: ./.github/actions/mecab-install
 
-        - name: Install Neologd
+        - name: Install IPAdic
           uses: ./.github/actions/ipadic-install
 
         ### user.dic の作成
